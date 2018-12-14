@@ -1,0 +1,39 @@
+buildscript {
+    ext.kotlin_version = "1.3.10"
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin"
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "com.squareup.okhttp3:okhttp:3.12.0"
+    implementation "com.beust:klaxon:3.0.1"
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "me.cassiano.ktlint.bbs.AppKt"
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'me.cassiano.ktlint.bbs.AppKt'
+    }
+    baseName = 'comment-machine'
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
